@@ -43,6 +43,9 @@ class SitesUp{
     }
 }
 
-$s = new SitesUp(new Client());
-var_dump($s->checkSites());
-
+$sitesUp = new SitesUp(new Client());
+$sitesUp->setRequestSites([
+    "http://www.google.com",
+    "http://www.cbs.com"
+]);
+var_dump($sitesUp->checkSites());
