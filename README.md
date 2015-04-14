@@ -8,3 +8,10 @@ Guzzle
 ## Instructions
 
 Run composer install
+
+
+### To do : 
+
+- [ ] Seperate SitesUp Class into own directory and add autoloading through PSR-4
+- [ ] Find Email Package 
+- [ ] Install and configure Email Package with code
