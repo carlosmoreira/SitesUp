@@ -13,26 +13,36 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Pool;
 
 
-$client = new Client();
+class SitesUp{
+    private $client;
+    private $requestSites;
 
-$sites = $client->get("http://www.fierceenigma.com/sitesapp/sites/websites")->json();
+    /*
+     * Inject Guzzle Client
+     * */
+    public function __construct(GuzzleHttp\Client $client){
+        $this->client = $client;
+    }
 
-$requests = null;
+    public function setRequestSites(array $sites = null){
+        foreach($sites as $site){
+            $this->requestSites[] = $this->client->createRequest("GET", $site);
+        }
+    }
 
-foreach ($sites as $site) {
-    $requests[] = $client->createRequest("GET", $site['Site']['url']);
-}
-
-$results = Pool::batch($client, $requests);
-
-if(!empty($results)){
-    foreach ($results as $res) {
-        echo $res->getEffectiveUrl() . " " . $res->getStatusCode() . "<br >";
+    public function checkSites(){
+        if(empty($this->requestSites)){
+            throw new exception("Please pass some urls to check");
+        }
+        $results = null;
+        $requests = Pool::batch($this->client, $this->requestSites);
+        foreach($requests as $req){
+            $results[] = array('url'=> $req->getEffectiveUrl() , 'statusCode'=> $req->getStatusCode());
+        }
+        return $results;
     }
 }
 
-
-
-
-
+$s = new SitesUp(new Client());
+var_dump($s->checkSites());
 
