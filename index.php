@@ -10,42 +10,39 @@
 require "vendor/autoload.php";
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Pool;
+use Nette\Mail\Message;
+use Nette\Mail\SendmailMailer;
 
+$message = new Message();
 
-class SitesUp{
-    private $client;
-    private $requestSites;
+$message->setFrom('Info <info@example.com>')
+    ->addTo('moreira.carlos09@gmail.com')
+    ->setSubject('Order Confirmation')
+    ->setBody("Hello, Your order has been accepted.");
 
-    /*
-     * Inject Guzzle Client
-     * */
-    public function __construct(GuzzleHttp\Client $client){
-        $this->client = $client;
-    }
-
-    public function setRequestSites(array $sites = null){
-        foreach($sites as $site){
-            $this->requestSites[] = $this->client->createRequest("GET", $site);
-        }
-    }
-
-    public function checkSites(){
-        if(empty($this->requestSites)){
-            throw new exception("Please pass some urls to check");
-        }
-        $results = null;
-        $requests = Pool::batch($this->client, $this->requestSites);
-        foreach($requests as $req){
-            $results[] = array('url'=> $req->getEffectiveUrl() , 'statusCode'=> $req->getStatusCode());
-        }
-        return $results;
-    }
-}
+$mailer = new SendmailMailer();
+$mailer->send($message);
 
 $sitesUp = new SitesUp(new Client());
 $sitesUp->setRequestSites([
     "http://www.google.com",
+    "http://www.google.coms",
     "http://www.cbs.com"
 ]);
+
+
 var_dump($sitesUp->checkSites());
+
+
+function cmp($a, $b)
+{
+    return ($a['statusCode'] != $b['statusCode']) ? 1 : 0;
+}
+
+$t = $sitesUp->checkSites();
+
+usort($t,"cmp");
+
+
+var_dump($t);
+

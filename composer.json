@@ -10,6 +10,12 @@
     }
   ],
   "require" :{
-    "guzzlehttp/guzzle": "5.2.0"
+    "guzzlehttp/guzzle": "5.2.0",
+    "nette/mail": "2.2.3"
+  },
+  "autoload": {
+    "psr-0": {
+      "": ["src/"]
+    }
   }
 }
